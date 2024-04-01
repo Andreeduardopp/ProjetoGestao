@@ -1,4 +1,5 @@
 from datetime import timezone
+import uuid
 from django.db import models
 from django.forms import ValidationError
 from funcionarios.choices import CNH_CATEGORIA_CHOICES
@@ -12,6 +13,7 @@ def validator_cpf(value):
     return mascara_cpf(value)    
 
 class funcionarioBase(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     nome = models.CharField(max_length=30, blank=True)
     sobrenome = models.CharField(max_length=150, blank=True)
     email = models.EmailField(unique=True, blank = True)
@@ -39,7 +41,9 @@ class funcionarioBase(models.Model):
     class Meta:
         abstract = True
 
-
+    def __str__(self):
+            return self.nome + " " + self.sobrenome
+    
 class motorista(funcionarioBase):
     cnh = models.CharField(max_length=11, blank = True ) 
     cnh_categoria = models.Choices(CNH_CATEGORIA_CHOICES, blank = True)
