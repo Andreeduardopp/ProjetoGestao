@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import motorista
+from .models import Motorista
 
-@admin.register(motorista)
+@admin.register(Motorista)
 class MotoristaAdmin(admin.ModelAdmin):
     list_display = ('id','nome', 'sobrenome', 'email', 'ativo', 'data_contratacao', 'data_desligamento')
     list_filter = ('ativo', 'data_contratacao', 'data_desligamento')
