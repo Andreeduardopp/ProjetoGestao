@@ -1,4 +1,5 @@
 from datetime import timezone
+import uuid
 from django.db import models
 from django.forms import ValidationError
 from funcionarios.choices import CNH_CATEGORIA_CHOICES
@@ -11,7 +12,8 @@ def validator_cpf(value):
         raise ValidationError('CPF inválido.')
     return mascara_cpf(value)    
 
-class funcionarioBase(models.Model):
+class FuncionarioBase(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     nome = models.CharField(max_length=30, blank=True)
     sobrenome = models.CharField(max_length=150, blank=True)
     email = models.EmailField(unique=True, blank = True)
@@ -19,7 +21,6 @@ class funcionarioBase(models.Model):
     data_nascimento = models.DateField()
     ativo = models.BooleanField(default=True)
     salario_base = models.CharField(max_length=10, blank=True)
-    adiantamentos = models.CharField(max_length=10, blank=True)
     salario_liquido = models.CharField(max_length=10, blank=True)
     data_contratacao = models.DateTimeField(auto_now_add=True)
     data_desligamento = models.DateTimeField(blank=True, null=True)
@@ -39,12 +40,14 @@ class funcionarioBase(models.Model):
     class Meta:
         abstract = True
 
-
-class motorista(funcionarioBase):
-    cnh = models.CharField(max_length=11, blank = True ) 
-    cnh_categoria = models.Choices(CNH_CATEGORIA_CHOICES, blank = True)
-    cnh_emissao = models.DateField(blank = True)
-    cnh_validade = models.DateField(blank = True)
+    def __str__(self):
+            return self.nome + " " + self.sobrenome
+    
+class Motorista(FuncionarioBase):
+    cnh = models.CharField(max_length=11, blank = True ,null=True) 
+    cnh_categoria = models.CharField(max_length=20,choices=CNH_CATEGORIA_CHOICES.choices, blank = True,null=True)
+    cnh_emissao = models.DateField(blank = True , null=True)
+    cnh_validade = models.DateField(blank = True,null=True)
 
 
 
